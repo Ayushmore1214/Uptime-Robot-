@@ -1,4 +1,4 @@
-This is a complete, end-to-end project for deploying a full-stack application (React + Node.js) to Amazon EKS. The entire infrastructure is managed by Terraform, and deployments are automated with GitHub Actions.
+  This is a complete, end-to-end project for deploying a full-stack application (React + Node.js) to Amazon EKS. The entire infrastructure is managed by Terraform, and deployments are automated with GitHub Actions.
 
 ## How to Run
 
