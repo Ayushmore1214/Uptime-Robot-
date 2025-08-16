@@ -1,10 +1,10 @@
 const express = require('express');
 const { Pool } = require('pg');
-const cors = require('cors'); // <-- The missing piece
+const cors = require('cors');
 const app = express();
 const port = 8080;
 
-app.use(cors()); // <-- The magic line that allows connections
+app.use(cors());
 
 const pool = new Pool({
   user: process.env.DB_USER,
