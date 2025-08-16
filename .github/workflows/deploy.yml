@@ -1,0 +1,72 @@
+name: Deploy Full Stack App to EKS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1 # Or your preferred region
+  ECR_REPOSITORY: k-stax-repo
+  EKS_CLUSTER_NAME: k-stax-cluster
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Build, Push, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/github-oidc-role # <-- IMPORTANT: CHANGE THIS
+        aws-region: ${{ env.AWS_REGION }}
+
+    # Backend Deployment
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push backend image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Set up Kubeconfig
+      run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+    - name: Deploy backend to EKS
+      run: |
+        sed -i 's|YOUR_ECR_REPO_URI:latest|${{ steps.build-image.outputs.image }}|' kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/
+
+    # Frontend Deployment
+    - name: Setup Node.js for Frontend
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    - name: Deploy Frontend to S3
+      env:
+        # Get the bucket name from a secret to keep it secure
+        S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      run: |
+        aws s3 sync frontend/build/ s3://$S3_BUCKET_NAME --delete
