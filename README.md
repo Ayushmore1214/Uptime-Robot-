@@ -11,7 +11,7 @@ This is a complete, end-to-end project for deploying a full-stack application (R
 
 ### 2. Terraform Setup
 1.  Navigate to the `/terraform` directory.
-2.  Create a file named `terraform.tfvars`.
+2.  Create a file named `terraform.tfvars`.vv
 3.  Add your variables to this file:
     ```tfvars
     db_password = "YourSuperStrongPassword123"
