@@ -6,7 +6,7 @@ function App() {
 
   useEffect(() => {
     // This is the correct URL!
-    const API_URL = 'http://k8s-default-backendi-6c2db33e75-309344880.us-east-1.elb.amazonaws.com'; 
+    const API_URL = 'https://k8s-default-backendi-6c2db33e75-309344880.us-east-1.elb.amazonaws.com';
 
     // The fetch call is now unblocked!
     fetch(`${API_URL}/status`)
