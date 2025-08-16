@@ -3,10 +3,13 @@ kind: Ingress
 metadata:
   name: backend-ingress
   annotations:
-    kubernetes.io/ingress.class: alb
+    # THE FIX: Tell the ALB to listen on HTTPS (port 443)
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443' # Redirect HTTP to HTTPS
 spec:
+  ingressClassName: alb
   rules:
     - http:
         paths:
