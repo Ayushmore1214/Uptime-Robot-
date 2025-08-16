@@ -5,15 +5,10 @@ function App() {
   const [status, setStatus] = useState('loading...');
 
   useEffect(() => {
-    // IMPORTANT: Replace this with the DNS name of your Application Load Balancer
-    // You will get this after the pipeline runs successfully and the ALB is created.
-    const API_URL = 'http://YOUR_ALB_DNS_NAME_HERE'; 
+    // This is the correct URL!
+    const API_URL = 'http://k8s-default-backendi-6c2db33e75-309344880.us-east-1.elb.amazonaws.com'; 
 
-    if (API_URL === 'http://YOUR_ALB_DNS_NAME_HERE') {
-      setStatus('Please update the API_URL in frontend/src/App.js');
-      return;
-    }
-
+    // The fetch call is now unblocked!
     fetch(`${API_URL}/status`)
       .then(res => {
         if (!res.ok) {
