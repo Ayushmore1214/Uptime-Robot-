@@ -1,11 +1,10 @@
 const express = require('express');
 const { Pool } = require('pg');
-const cors = require('cors');
+const cors = require('cors'); // <-- The missing piece
 const app = express();
 const port = 8080;
 
-// Enable CORS for all routes
-app.use(cors());
+app.use(cors()); // <-- The magic line that allows connections
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -14,7 +13,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: 5432,
   ssl: {
-    rejectUnauthorized: false // Required for connecting to RDS from EKS
+    rejectUnauthorized: false
   }
 });
 
