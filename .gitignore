@@ -1,0 +1,6 @@
+# Ignore Kubernetes secrets
+kubernetes/secret.yaml
+
+# Ignore Terraform variable files
+terraform/terraform.tfvars
+terraform/*.tfvars
